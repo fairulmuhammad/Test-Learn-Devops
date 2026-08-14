@@ -28,7 +28,7 @@ Runner on this box pulls jobs from GitHub (outbound only). CD deploy job
 ```bash
 mkdir -p ~/actions-runner && cd ~/actions-runner
 curl -o actions-runner-linux-x64.tar.gz -L \
-  https://github.com/actions/runner/releases/latest/download/actions-runner-linux-x64-2.319.1.tar.gz
+  https://github.com/actions/runner/releases/latest/download/actions-runner-linux-x64-2.336.0.tar.gz
 tar xzf actions-runner-linux-x64.tar.gz
 ```
 
