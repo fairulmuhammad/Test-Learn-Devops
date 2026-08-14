@@ -1,0 +1,52 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: YAML lint (all .yml/.yaml)
+        run: |
+          python3 -c "import yaml" 2>/dev/null || pip install pyyaml --quiet
+          fail=0
+          while IFS= read -r f; do
+            python3 -c "import yaml,sys; yaml.safe_load(open('$f'))" || { echo "BAD YAML: $f"; fail=1; }
+          done < <(find . -name '*.yml' -o -name '*.yaml' | grep -v node_modules)
+          [ $fail -eq 0 ]
+      - name: Shellcheck (if any .sh)
+        run: |
+          if command -v shellcheck >/dev/null; then
+            find . -name '*.sh' -exec shellcheck {} +
+          else
+            echo "shellcheck not available, skipping"
+          fi
+      - name: Markdown relative links resolve
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            grep -oE '\]\(\.\./[^)]+\)' "$f" | sed 's/](//;s/)//' | while read -r p; do
+              [ -f "$(dirname "$f")/$p" ] || { echo "BROKEN LINK: $f -> $p"; fail=1; }
+            done
+          done < <(find . -name '*.md')
+          [ $fail -eq 0 ]
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t hello-app:ci apps/hello-app
+      - name: Run + health check
+        run: |
+          docker run -d --name hello-app-ci -p 8091:8000 -e APP_VERSION=ci hello-app:ci
+          for i in $(seq 1 15); do
+            curl -sf http://127.0.0.1:8091/health && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8091/health | grep -q '"status": "ok"'
+      - name: Cleanup
+        run: docker rm -f hello-app-ci

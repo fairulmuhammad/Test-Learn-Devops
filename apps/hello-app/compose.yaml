@@ -1,0 +1,9 @@
+services:
+  hello-app:
+    build: .
+    image: hello-app:latest
+    ports:
+      - "8090:8000"
+    environment:
+      APP_VERSION: "${APP_VERSION:-dev}"
+    restart: unless-stopped

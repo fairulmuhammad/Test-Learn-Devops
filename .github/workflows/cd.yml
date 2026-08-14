@@ -1,0 +1,20 @@
+name: CD
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy hello-app
+        working-directory: apps/hello-app
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 15); do
+            curl -sf http://127.0.0.1:8090/health && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8090/health | grep -q '"status": "ok"'
