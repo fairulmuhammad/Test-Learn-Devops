@@ -17,4 +17,4 @@ jobs:
             curl -sf http://127.0.0.1:8090/health && break
             sleep 1
           done
-          curl -sf http://127.0.0.1:8090/health | grep -q '"status": "ok"'
+          curl -sf http://127.0.0.1:8090/health | grep -q '"status":"ok"'
