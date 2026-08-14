@@ -52,3 +52,4 @@
 - 2026-08-14: Lab 06 (ci-cd) done — hello.yml + matrix ci.yml + cd.yml with environment gate, all YAML-validated, 3 commits in scratch repo, nothing pushed.
 - 2026-08-14: Lab 07 (monitoring) done — journald audit (networkd-wait-online timeout), netdata restarted+verified+stopped (port 19999; 9090=Cockpit), logrotate proven with su directive + chmod/chown gotchas.
 - 2026-08-14: Lab 08 (security) done — SSH audit (key-only in practice, password auth ON), exposure map (3306 public-facing, ufw inactive, docker bypass), secrets sweep (env perms 755→need 600; GitHub PAT leaked in git remote URL — needs rotation). AUDIT ONLY, nothing changed.
+- 2026-08-14: Capstone scaffolded — hello-app (Flask, :8090) in apps/hello-app/, CI (validate+build+health) + CD (self-hosted deploy) workflows, systemd unit deployed + verified (restart OK). Repo committed. Pending user PAT: push to GitHub + register self-hosted runner (see GITHUB_SETUP.md).
